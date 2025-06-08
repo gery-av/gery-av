@@ -3,7 +3,14 @@ import os
 import sys
 
 API_KEY = os.environ.get("WAKATIME_API_KEY")
-headers = {"Authorization": f"Bearer {API_KEY}"}
+
+if not API_KEY:
+    print("❌ WAKATIME_API_KEY is not set")
+    sys.exit(1)
+
+headers = {
+    "Authorization": f"Bearer {API_KEY}"
+}
 url = "https://wakatime.com/api/v1/users/current/stats/last_7_days"
 
 response = requests.get(url, headers=headers)
