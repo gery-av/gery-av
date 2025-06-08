@@ -6,4 +6,4 @@
 
 > Total coding time. Updated every 1 hour.
 
-![WakaTime Graph](waka_graph.png)
+<!--START_SECTION:waka-graph-->
