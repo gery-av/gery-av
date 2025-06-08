@@ -1,33 +1,20 @@
 import requests
-import matplotlib.pyplot as plt
-from datetime import datetime
 import os
+import sys
 
-api_key = os.getenv("WAKATIME_API_KEY")
+API_KEY = os.environ.get("WAKATIME_API_KEY")
+headers = {"Authorization": f"Bearer {API_KEY}"}
+url = "https://wakatime.com/api/v1/users/current/stats/last_7_days"
 
-headers = {
-    "Authorization": f"Basic {api_key.encode('utf-8').hex()}",
-}
-params = {
-    "range": "last_7_days"
-}
-response = requests.get(
-    "https://wakatime.com/api/v1/users/current/stats",
-    headers={"Authorization": f"Bearer {api_key}"},
-    params=params
-)
-
+response = requests.get(url, headers=headers)
 data = response.json()
+
+if "data" not in data or "languages" not in data["data"]:
+    print("❌ Invalid response from WakaTime API")
+    print(data)
+    sys.exit(1)
+
 languages = data["data"]["languages"]
 
-labels = [lang["name"] for lang in languages]
-minutes = [lang["total_seconds"] / 60 for lang in languages]
-
-plt.figure(figsize=(10, 6))
-plt.plot(labels, minutes, marker='o')
-plt.title("Coding Time per Language (Last 7 Days)")
-plt.xlabel("Language")
-plt.ylabel("Minutes")
-plt.grid(True)
-plt.tight_layout()
-plt.savefig("waka_graph.png")
+for lang in languages:
+    print(f"{lang['name']}: {lang['text']} ({lang['percent']}%)")
